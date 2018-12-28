@@ -18,10 +18,10 @@ pipeline{
 
       // "stages"定义项目构建的多个模块，可以添加多个 “stage”， 可以多个 “stage” 串行或者并行执行
       stages{
-        // 定义第一个stage， 完成克隆源码的任务， 本示例中使用了已经创建并且id为‘git’的证书
+        // 定义第一个stage， 完成克隆源码的任务
         stage('Git'){
           steps{
-            git branch: '${BRANCH}', credentialsId: '', url: 'https://code.aliyun.com/haoshuwei/yunqi-java-demo.git'
+            git branch: '${BRANCH}', credentialsId: '', url: 'https://github.com/AliyunContainerService/jenkins-demo.git'
           }
         }
 
