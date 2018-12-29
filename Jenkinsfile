@@ -5,7 +5,6 @@ pipeline{
         IMAGE_TAG =  sh(returnStdout: true,script: 'echo $image_tag').trim()
         ORIGIN_REPO =  sh(returnStdout: true,script: 'echo $origin_repo').trim()
         REPO =  sh(returnStdout: true,script: 'echo $repo').trim()
-        REPO_ENDPOINT = sh(returnStdout: true,script: 'echo $repo_endpoint').trim()
         BRANCH =  sh(returnStdout: true,script: 'echo $branch').trim()
       }
 
