@@ -31,4 +31,4 @@ spec:
     name: jenkins-java-demo
   selector:
     app: jenkins-java-demo
-  type: LoadBalancer
+  type: NodePort
