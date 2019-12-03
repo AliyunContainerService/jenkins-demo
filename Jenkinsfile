@@ -45,13 +45,11 @@ pipeline{
 
         // 添加第四个stage, 部署应用到指定k8s集群
         stage('Deploy to Kubernetes') {
-            parallel {
-                    steps {
-                        container('kubectl') {
-                            step([$class: 'KubernetesDeploy', authMethod: 'certs', apiServerUrl: 'https://kubernetes.default.svc.cluster.local:443', credentialsId:'k8sCertAuth', config: 'deployment.yaml',variableState: 'ORIGIN_REPO,REPO,IMAGE_TAG'])
-                        }
-                    }
+          steps {
+            container('kubectl') {
+              step([$class: 'KubernetesDeploy', authMethod: 'certs', apiServerUrl: 'https://kubernetes.default.svc.cluster.local:443', credentialsId:'k8sCertAuth', config: 'deployment.yaml',variableState: 'ORIGIN_REPO,REPO,IMAGE_TAG'])
             }
+          }
         }
       }
 }
