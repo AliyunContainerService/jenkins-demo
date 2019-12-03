@@ -18,11 +18,11 @@ pipeline{
       // "stages"定义项目构建的多个模块，可以添加多个 “stage”， 可以多个 “stage” 串行或者并行执行
       stages{
         // 定义第一个stage， 完成克隆源码的任务
-        stage('Git'){
-          steps{
-            git branch: '${BRANCH}', credentialsId: '', url: 'https://github.com/AliyunContainerService/jenkins-demo.git'
-          }
-        }
+       // stage('Git'){
+         // steps{
+           // git branch: '${BRANCH}', credentialsId: '', url: 'https://github.com/AliyunContainerService/jenkins-demo.git'
+         // }
+       // }
 
         // 添加第二个stage， 运行源码打包命令
         stage('Package'){
