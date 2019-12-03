@@ -34,7 +34,7 @@ pipeline{
         }
 
 
-        // 添加第四个stage, 运行容器镜像构建和推送命令， 用到了environment中定义的groovy环境变量
+        // 添加第三个stage, 运行容器镜像构建和推送命令， 用到了environment中定义的groovy环境变量
         stage('Image Build And Publish'){
           steps{
               container("kaniko") {
@@ -43,34 +43,15 @@ pipeline{
           }
         }
 
-
+        // 添加第四个stage, 部署应用到指定k8s集群
         stage('Deploy to Kubernetes') {
             parallel {
-                stage('Deploy to Production Environment') {
-                    when {
-                        expression {
-                            "$BRANCH" == "master"
-                        }
-                    }
                     steps {
                         container('kubectl') {
                             step([$class: 'KubernetesDeploy', authMethod: 'certs', apiServerUrl: 'https://kubernetes.default.svc.cluster.local:443', credentialsId:'k8sCertAuth', config: 'deployment.yaml',variableState: 'ORIGIN_REPO,REPO,IMAGE_TAG'])
                         }
                     }
-                }
-                stage('Deploy to Staging001 Environment') {
-                    when {
-                        expression {
-                            "$BRANCH" == "latest"
-                        }
-                    }
-                    steps {
-                        container('kubectl') {
-                            step([$class: 'KubernetesDeploy', authMethod: 'certs', apiServerUrl: 'https://kubernetes.default.svc.cluster.local:443', credentialsId:'k8sCertAuth', config: 'deployment.yaml',variableState: 'ORIGIN_REPO,REPO,IMAGE_TAG'])
-                        }
-                    }
-                }
             }
         }
       }
-    }
+}
