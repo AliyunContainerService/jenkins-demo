@@ -50,6 +50,7 @@ pipeline{
               sh 'sed -i -e "s/ORIGIN_REPO/${ORIGIN_REPO}/g" application-demo.yaml'
               sh 'sed -i -e "s/IMAGE_TAG/${IMAGE_TAG}/g" application-demo.yaml'
               sh 'sed -i -e "s/REPO/${REPO}/g" application-demo.yaml'
+              sh 'kubectl apply -f application-demo.yaml'
             }
           }
         }
