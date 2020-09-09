@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: application-demo
-        image: ORIGIN_REPO/REPO:IMAGE_TAG
+        image: registry-vpc.REGION.aliyuncs.com/NAMESPACE/REPO:IMAGE_TAG
         ports:
         - containerPort: 8080
 
