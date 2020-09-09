@@ -2,10 +2,11 @@ pipeline{
       // 定义groovy脚本中使用的环境变量
       environment{
         // 将构建任务中的构建参数转换为环境变量
-        IMAGE_TAG =  sh(returnStdout: true,script: 'echo $image_tag').trim()
-        ORIGIN_REPO =  sh(returnStdout: true,script: 'echo $origin_repo').trim()
-        REPO =  sh(returnStdout: true,script: 'echo $repo').trim()
-        BRANCH =  sh(returnStdout: true,script: 'echo $branch').trim()
+		IMAGE_TAG =  sh(returnStdout: true,script: 'echo $image_tag').trim()
+		NAMESPACE =  sh(returnStdout: true,script: 'echo $namespace').trim()
+		REGION = sh(returnStdout: true,script: 'echo $region').trim()
+		REPO =  sh(returnStdout: true,script: 'echo $repo').trim()
+		BRANCH =  sh(returnStdout: true,script: 'echo $branch').trim()
       }
 
       // 定义本次构建使用哪个标签的构建环境，本示例中为 “slave-pipeline”
@@ -38,7 +39,7 @@ pipeline{
         stage('Image Build And Publish'){
           steps{
               container("kaniko") {
-                  sh "kaniko -f `pwd`/Dockerfile -c `pwd` --destination=${ORIGIN_REPO}/${REPO}:${IMAGE_TAG} --skip-tls-verify"
+                  sh "kaniko -f `pwd`/Dockerfile -c `pwd` --destination=registry-vpc.${REGION}.aliyuncs.com/${NAMESPACE}/${REPO}:${IMAGE_TAG} --skip-tls-verify"
               }
           }
         }
@@ -47,10 +48,11 @@ pipeline{
         stage('Deploy to Kubernetes') {
           steps {
             container('kubectl') {
-              sh 'sed -i -e "s/ORIGIN_REPO/${ORIGIN_REPO}/g" application-demo.yaml'
-              sh 'sed -i -e "s/IMAGE_TAG/${IMAGE_TAG}/g" application-demo.yaml'
-              sh 'sed -i -e "s/REPO/${REPO}/g" application-demo.yaml'
-              sh 'kubectl apply -f application-demo.yaml'
+			  sh "sed -i  's/REGION/${REGION}/g' application-demo.yaml"
+			  sh "sed -i  's/NAMESPACE/${NAMESPACE}/g' application-demo.yaml"
+			  sh "sed -i  's/REPO/${REPO}/g' application-demo.yaml"
+			  sh "sed -i  's/IMAGE_TAG/${IMAGE_TAG}/g' application-demo.yaml"
+			  sh "kubectl -n app apply -f  application-demo.yaml"
             }
           }
         }
