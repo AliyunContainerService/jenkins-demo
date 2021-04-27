@@ -1,21 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jenkins-java-demo
+  name: application-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jenkins-java-demo
+      app: application-demo
   template:
     metadata:
       labels:
-        app: jenkins-java-demo
+        app: application-demo
     spec:
       containers:
-      - name: jenkins-java-demo
+      - name: application-demo
         image: IMAGE
-        imagePullPolicy: Always
         ports:
         - containerPort: 8080
 
@@ -23,12 +22,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jenkins-java-demo
+  name: application-demo
 spec:
   ports:
   - port: 80
     targetPort: 8080
-    name: jenkins-java-demo
+    name: application-demo
   selector:
-    app: jenkins-java-demo
+    app: application-demo
   type: ClusterIP
