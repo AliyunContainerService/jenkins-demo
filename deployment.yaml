@@ -1,9 +1,9 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins-java-demo
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: jenkins-java-demo
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: jenkins-java-demo
-        image: ${ORIGIN_REPO}/${REPO}:${IMAGE_TAG}
+        image: IMAGE
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -31,4 +31,4 @@ spec:
     name: jenkins-java-demo
   selector:
     app: jenkins-java-demo
-  type: LoadBalancer
+  type: ClusterIP
