@@ -2,10 +2,7 @@ pipeline{
       // 定义groovy脚本中使用的环境变量
       environment{
         // 将构建任务中的构建参数转换为环境变量
-		IMAGE_TAG =  sh(returnStdout: true,script: 'echo $image_tag').trim()
-		NAMESPACE =  sh(returnStdout: true,script: 'echo $namespace').trim()
-		REGION = sh(returnStdout: true,script: 'echo $region').trim()
-		REPO =  sh(returnStdout: true,script: 'echo $repo').trim()
+		IMAGE = sh(returnStdout: true,script: 'echo registry.$image_region.aliyuncs.com/$image_namespace/$image_reponame:$image_tag').trim()
 		BRANCH =  sh(returnStdout: true,script: 'echo $branch').trim()
       }
 
@@ -26,33 +23,30 @@ pipeline{
         }
 
         // 添加第二个stage， 运行源码打包命令
-        stage('Package'){
-          steps{
-              container("maven") {
-                  sh "mvn package -B -DskipTests"
-              }
-          }
-        }
+        // stage('Package'){
+        //   steps{
+        //       container("maven") {
+        //           sh "mvn package -B -DskipTests"
+        //       }
+        //   }
+        // }
 
 
         // 添加第三个stage, 运行容器镜像构建和推送命令， 用到了environment中定义的groovy环境变量
-        stage('Image Build And Publish'){
-          steps{
-              container("kaniko") {
-                  sh "kaniko -f `pwd`/Dockerfile -c `pwd` --destination=registry-vpc.${REGION}.aliyuncs.com/${NAMESPACE}/${REPO}:${IMAGE_TAG} --skip-tls-verify"
-              }
-          }
-        }
+        // stage('Image Build And Publish'){
+        //   steps{
+        //       container("kaniko") {
+        //           sh "kaniko -f `pwd`/Dockerfile -c `pwd` --destination=${IMAGE} --skip-tls-verify"
+        //       }
+        //   }
+        // }
 
         // 添加第四个stage, 部署应用到指定k8s集群
         stage('Deploy to Kubernetes') {
           steps {
             container('kubectl') {
-			  sh "sed -i  's/REGION/${REGION}/g' application-demo.yaml"
-			  sh "sed -i  's/NAMESPACE/${NAMESPACE}/g' application-demo.yaml"
-			  sh "sed -i  's/REPO/${REPO}/g' application-demo.yaml"
-			  sh "sed -i  's/IMAGE_TAG/${IMAGE_TAG}/g' application-demo.yaml"
-			  sh "kubectl -n app apply -f  application-demo.yaml"
+			  sh "sed -i  's/IMAGE/${IMAGE}/g' deployment.yaml"
+			  sh "kubectl apply -f  deployment.yaml"
             }
           }
         }
