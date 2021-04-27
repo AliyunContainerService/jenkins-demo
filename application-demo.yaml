@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: application-demo
-        image: registry-vpc.REGION.aliyuncs.com/NAMESPACE/REPO:IMAGE_TAG
+        image: IMAGE
         ports:
         - containerPort: 8080
 
@@ -30,4 +30,4 @@ spec:
     name: application-demo
   selector:
     app: application-demo
-  type: LoadBalancer
+  type: ClusterIP
